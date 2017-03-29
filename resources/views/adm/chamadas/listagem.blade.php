@@ -51,7 +51,7 @@
                                     <td>{{$chamada->nome_requeridor}}</td>
                                     <td>{{$chamada->descricao}}</td>
                                     <td>{{$chamada->categoria->nome}}</td>
-                                    <td><i class="fa fa-search detalhesPermissao" iid="{{$chamada->id}}" style="cursor: pointer"></i></td>
+                                    <td><i class="fa fa-search detalhesChamada" iid="{{$chamada->id}}" style="cursor: pointer"></i></td>
                                     <td class="iconeListagem"><a
                                                 href="chamadas/editar/{{$chamada->id}}"><i
                                                     class="fa fa-pencil-square-o"></i></a></td>
@@ -93,12 +93,55 @@
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
+            @foreach($chamadas as $chamada)
+                <div class="modal fade" id="detalhesChamadas{{$chamada->id}}" tabindex="-1" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                            aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">Detalhes Chamada</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="list-group">
+                                    <h4 class="list-group-item-heading">Datas</h4>
+                                    <p class="list-group-item-text">Início: {{date("d/m/Y", strtotime($chamada->data_inicio))}} &nbsp; Fim: {{date("d/m/Y", strtotime($chamada->data_fim))}}</p>
+                                </div>
+
+                                <div class="list-group">
+                                    <h4 class="list-group-item-heading">Requeridor</h4>
+                                    <p class="list-group-item-text">{{$chamada->nome_requeridor}}</p>
+                                </div>
+
+                                <div class="list-group">
+                                    <h4 class="list-group-item-heading">Descrição</h4>
+                                    <p class="list-group-item-text">{{$chamada->descricao}}</p>
+                                </div>
+
+                                <div class="list-group">
+                                    <h4 class="list-group-item-heading">Categoria</h4>
+                                    <p class="list-group-item-text">{{$chamada->categoria->nome}}</p>
+                                </div>
+
+                                <div class="list-group">
+                                    <h4 class="list-group-item-heading">Pessoa(s)</h4>
+                                    @foreach($chamada->usuariosChamados as $user)
+                                        <p class="list-group-item-text">{{$user->usuario->nome}}</p>
+                                    @endforeach
+                                </div>
+
+                                <input type="hidden" id="tipoRemocao" value="" />
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+            @endforeach
         </div>
     </div>
 </div>
 @stop
 @section('js')
-    <script src="adm/js/usuarios.js"></script>
+    <script src="adm/js/chamadas.js"></script>
 
     <!-- Datatables -->
     <script src="adm/js/datatables/js/jquery.dataTables.js"></script>
