@@ -278,6 +278,16 @@ abstract class AbstractCrudController extends Controller
     }
 
     /**
+     * Retorna a data local atual no formato dd-mm-yyyy
+     * @return string
+     */
+    protected function mesAtualBr()
+    {
+        date_default_timezone_set('America/Fortaleza');
+        return date('M');
+    }
+
+    /**
      * Retorna a hora local atual no hh:mm
      * @return string
      */

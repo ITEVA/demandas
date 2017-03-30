@@ -102,7 +102,7 @@
                                     </ul>
 
                                     <ul class="nav child_menu" style="display: none">
-                                        <li><a href="relatorios/chamdas">Chamadas</a></li>
+                                        <li><a href="relatorios/chamadas">Chamadas</a></li>
                                     </ul>
                                 </li>
                             @endif

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Chamada;
+use App\ChamadaUser;
 use App\Permissao;
 use Illuminate\Http\Request;
 use App\User;
@@ -95,6 +97,128 @@ class RelatorioController extends AbstractCrudController
                 $pdf->SetX(20);
                 $pdf->Cell(278, 14, $usuario->nome, 1, 0, "C");
                 $pdf->Cell(278, 14, $usuario->permissao->nome, 1, 0, "C");
+                $pdf->SetY($pdf->GetY() + 14);
+            }
+        }
+
+        //Rodape
+        $pdf->SetAutoPageBreak(5);
+        $pdf->SetFont('arial', '', 10);
+        $pdf->SetXY(20, -45);
+        $pdf->Cell(555, 15, "Rodovia CE - 040 s/n - Aquiraz - CE - cep 61.700-000 - cx. postal 66 - fone (85) 3362-3210 - e-mail iteva@iteva.org.br", 'T', 0, 'C');
+        $pdf->SetXY(20, -30);
+        $pdf->Cell(555, 15, "www.iteva.org.br", 0, 0, 'C');
+
+        $pdf->Output();
+        exit;
+    }
+
+    protected function listarChamadas()
+    {
+        if($this->checkPermissao()) return redirect('error404');
+        $itensPermitidos = $this->getClassesPermissao(Auth::user()->permissao->id);
+
+        $users = User::where(['id_empregador' => Auth::user()->id_empregador])->get();
+        $chamadas = Chamada::where($this->getFilter())->get();
+
+        $usuarioFiltrado = 'geral';
+
+        return view('adm.relatorios.chamadas')
+            ->with('itensPermitidos', $itensPermitidos)
+            ->with('users', $users)
+            ->with('chamadas', $chamadas)
+            ->with('usuarioFiltrado', $usuarioFiltrado);
+    }
+
+    protected function listarFiltroChamadas(Request $request)
+    {
+        if($this->checkPermissao()) return redirect('error404');
+        $itensPermitidos = $this->getClassesPermissao(Auth::user()->permissao->id);
+
+        $users = User::where(['id_empregador' => Auth::user()->id_empregador])->get();
+
+        if($request->usuarios == 'geral')
+            $chamadas = Chamada::where($this->getFilter())->get();
+
+        else {
+            $chamadasUsers = ChamadaUser::where(['id_empregador' => Auth::user()->id_empregador, 'id_usuario' => $request->usuarios])->get();
+            $idsFiltro = array();
+            $i = 0;
+
+            foreach ($chamadasUsers as $chamadaUser){
+                $idsFiltro[$i++] = $chamadaUser->id_chamada;
+            }
+
+            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador])->whereIn('id', $idsFiltro)->get();
+        }
+
+        $usuarioFiltrado = $request->usuarios;
+
+        return view('adm.relatorios.chamadas')
+            ->with('itensPermitidos', $itensPermitidos)
+            ->with('users', $users)
+            ->with('chamadas', $chamadas)
+            ->with('usuarioFiltrado', $usuarioFiltrado);
+    }
+
+    protected function imprimirChamadas(Request $request)
+    {
+        $users = User::where(['id_empregador' => Auth::user()->id_empregador])->get();
+        $userFilter = User::where(['id_empregador' => Auth::user()->id_empregador, 'id' => $request->usuarios])->get();
+        $userName = $request->usuarios === "geral" ? 'Geral' : $userFilter[0]->nome;
+
+        if($request->usuarios == 'geral')
+            $chamadas = Chamada::where($this->getFilter())->get();
+
+        else {
+            $chamadasUsers = ChamadaUser::where(['id_empregador' => Auth::user()->id_empregador, 'id_usuario' => $request->usuarios])->get();
+            $idsFiltro = array();
+            $i = 0;
+
+            foreach ($chamadasUsers as $chamadaUser){
+                $idsFiltro[$i++] = $chamadaUser->id_chamada;
+            }
+
+            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador])->whereIn('id', $idsFiltro)->get();
+        }
+
+        $dataEn = parent::dataAtualEn();
+        $dataBr = parent::dataAtualBr();
+        $diaSemana = parent::diaSemana($dataEn);
+        $mesAtual = parent::mesAtualBr();
+
+        //Criando o objeto de PDF e inicializando suas configurações
+        $pdf = new FPDF("P", "pt", "A4");
+
+        $pdf->SetTitle('Relatório de Chamadas');
+
+        //Adiciona uma nova pagina para cada colaborador
+        $pdf->AddPage();
+
+        //Desenha o cabeçalho do relatorio
+        $pdf->Image('adm/images/logo.png');
+        $pdf->SetXY(225, 80);
+        $pdf->SetFont('arial', '', 10);
+        $pdf->Cell(595, 14, $mesAtual, 0, 0, "C");
+        $pdf->Line(20, 110 , 575, 110);
+
+        $pdf->SetXY(0, 115);
+        $pdf->SetFont('arial', 'B', 10);
+        $pdf->Cell(595, 14, "RELATÓRIO DE CHAMADAS: " . $userName , 0, 0, "C");
+
+        $pdf->SetXY(20, 135);
+        $pdf->Cell(200, 20, 'Data', 1, 0, "C");
+        $pdf->Cell(200, 20, 'Nome requeridor', 1, 0, "C");
+        $pdf->Cell(156, 20, 'Categoria', 1, 0, "C");
+
+        if(count($chamadas) > 0) {
+            $pdf->SetY($pdf->GetY() + 20);
+            foreach ($chamadas as $chamada) {
+                $data =  parent::formatarDataBr($chamada->data_inicio);
+                $pdf->SetX(20);
+                $pdf->Cell(200, 14, $data, 1, 0, "C");
+                $pdf->Cell(200, 14, $chamada->nome_requeridor, 1, 0, "C");
+                $pdf->Cell(156, 14, $chamada->categoria->nome, 1, 0, "C");
                 $pdf->SetY($pdf->GetY() + 14);
             }
         }

@@ -50,6 +50,10 @@ Route::get('/relatorios/usuarios', 'RelatorioController@listarUsuarios');
 Route::post('/relatorios/usuarios', 'RelatorioController@listarFiltroUsuarios');
 Route::post('/relatorios/usuarios/imprimir', 'RelatorioController@imprimirUsuarios');
 
+Route::get('/relatorios/chamadas', 'RelatorioController@listarChamadas');
+Route::post('/relatorios/chamadas', 'RelatorioController@listarFiltroChamadas');
+Route::post('/relatorios/chamadas/imprimir', 'RelatorioController@imprimirChamadas');
+
 //Rotas para gestão de chamadas
 Route::get('/chamadas', 'ChamadaController@listar');
 Route::get('/chamadas/novo', 'ChamadaController@novo');
