@@ -29,15 +29,9 @@
                         @endif
 
                         <div class="form-group col-md-5 col-xs-12">
-                            <label for="nome">Data Início*</label>
+                            <label for="nome">Data*</label>
                             <input type="text" class="form-control date date-picker" name="data_inicio"
                                    value="{{old('data_inicio') !== null ? old('data_inicio') : $chamada->data_inicio}}"/>
-                        </div>
-
-                        <div class="form-group col-md-5 col-xs-12">
-                            <label for="nome">Data Fim*</label>
-                            <input type="text" class="form-control date date-picker" name="data_fim"
-                                   value="{{old('data_fim') !== null ? old('data_fim') : $chamada->data_fim}}"/>
                         </div>
 
                         <div class="form-group col-md-5 col-xs-12">
@@ -88,6 +82,12 @@
                             <label for="descricao">Descrição</label>
                             <textarea class="form-control" name="descricao">{{old('descricao') !== null ? old('descricao') : $chamada->descricao}}</textarea>
                         </div>
+                        <div class="form-group col-md-5 col-xs-12" style="visibility: hidden">
+                            <label for="nome">Hora Início*</label>
+                            <input type="time" class="form-control" name="hora_inicio"
+                                   value="{{isset($horaAtual) ? $horaAtual : $chamada->hora_inicio}}"/>
+                        </div>
+
 
                         <div class="ln_solid col-md-12 col-xs-12"></div>
                         <div class="form-group  col-md-12 col-xs-12">

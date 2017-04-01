@@ -60,4 +60,5 @@ Route::get('/chamadas/novo', 'ChamadaController@novo');
 Route::post('/chamadas/salvar', 'ChamadaController@salvar');
 Route::get('/chamadas/editar/{id}', 'ChamadaController@editar');
 Route::post('/chamadas/atualizar/{id}', 'ChamadaController@atualizar');
+Route::post('/chamadas/saida/{id}', 'ChamadaController@saida');
 Route::post('/chamadas/removerLote', 'ChamadaController@removerLote');

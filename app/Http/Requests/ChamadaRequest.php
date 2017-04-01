@@ -15,7 +15,6 @@ class ChamadaRequest extends FormRequest
     {
         return [
             'data_inicio' => 'required',
-            'data_fim' => 'required',
             'nome_requeridor' => 'required',
             'usuarios' => 'required'
         ];

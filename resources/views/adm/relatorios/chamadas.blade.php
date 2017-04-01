@@ -49,8 +49,7 @@
                                 <th id="checkboxs">
                                     <input type="checkbox" id="check-all" class="tableflat">
                                 </th>
-                                <th>Data Início</th>
-                                <th>Data Fim</th>
+                                <th>Data</th>
                                 <th>Requeridor</th>
                                 <th>Descrição</th>
                                 <th>Categoria</th>
@@ -65,7 +64,6 @@
                                             <input type="checkbox" id="row{{$chamada->id}}" class="tableflat">
                                         </td>
                                         <td>{{$chamada->data_inicio}}</td>
-                                        <td>{{$chamada->data_fim}}</td>
                                         <td>{{$chamada->nome_requeridor}}</td>
                                         <td>{{$chamada->descricao}}</td>
                                         <td>{{$chamada->categoria->nome}}</td>
@@ -115,8 +113,8 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="list-group">
-                                        <h4 class="list-group-item-heading">Datas</h4>
-                                        <p class="list-group-item-text">Início: {{date("d/m/Y", strtotime($chamada->data_inicio))}} &nbsp; Fim: {{date("d/m/Y", strtotime($chamada->data_fim))}}</p>
+                                        <h4 class="list-group-item-heading">Data</h4>
+                                        <p class="list-group-item-text">{{date("d/m/Y", strtotime($chamada->data_inicio))}}</p>
                                     </div>
 
                                     <div class="list-group">
@@ -208,10 +206,6 @@
                 {'bSortable': true,
                     'aTargets': [1],
                     render: $.fn.dataTable.render.moment( 'DD/MM/YYYY' )},
-                {'bSortable': true,
-                    'aTargets': [2],
-                    render: $.fn.dataTable.render.moment( 'DD/MM/YYYY' )},
-
                 {'bSortable': false,
                     'aTargets': [6]}
             ],

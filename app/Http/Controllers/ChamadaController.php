@@ -27,11 +27,13 @@ class ChamadaController extends AbstractCrudController
         $categorias = Categoria::where($this->getFilter())->get();
         $users = User::where(['id_empregador' => Auth::user()->id_empregador])->get();
         $idLogado = Auth::user()->id;
+        $horaAtual = parent::horaAtual();
 
         return parent::novo()
             ->with('categorias', $categorias)
             ->with('users', $users)
-            ->with('idLogado', $idLogado);
+            ->with('idLogado', $idLogado)
+            ->with('horaAtual', $horaAtual);
     }
 
     public function editar($id)
@@ -51,7 +53,6 @@ class ChamadaController extends AbstractCrudController
     public function salvar(ChamadaRequest $request){
 
         $request['id_empregador'] = Auth::user()->id_empregador;
-
         $users = $request->usuarios;
 
         $request->offsetUnset('usuarios');
@@ -74,9 +75,7 @@ class ChamadaController extends AbstractCrudController
 
     public function atualizar(ChamadaRequest $request, $id){
         $request['id_empregador'] = Auth::user()->id_empregador;
-
         $users = $request->usuarios;
-
         $request->offsetUnset('usuarios');
 
         try {
@@ -91,6 +90,19 @@ class ChamadaController extends AbstractCrudController
                 ->withInput()
                 ->withErrors(array($e->getMessage()));
         }
+    }
+
+    public function saida(Request $request, $id){
+        $dados = array(
+            "hora_fim" => parent::horaAtual()
+        );
+
+        $chamada = Chamada::find($id);
+        $chamada->fill($dados);
+        $chamada->save();
+
+        return redirect()
+            ->action('ChamadaController@listar');
     }
 
     public function salvarUsariosChamados($users, $idChamada){
@@ -114,7 +126,6 @@ class ChamadaController extends AbstractCrudController
     protected function formatOutput($request)
     {
         $request['data_inicio'] = $this->formatarDataEn($request['data_inicio']);
-        $request['data_fim'] = $this->formatarDataEn($request['data_fim']);
 
         return parent::formatOutput($request);
     }

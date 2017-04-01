@@ -29,11 +29,11 @@
                             <th id="checkboxs">
                                 <input type="checkbox" id="check-all" class="tableflat">
                             </th>
-                            <th>Data Início</th>
-                            <th>Data Fim</th>
+                            <th>Data</th>
                             <th>Requeridor</th>
                             <th>Descrição</th>
                             <th>Categoria</th>
+                            <th>Saída</th>
                             <th>Visualizar</th>
                             <th>Editar</th>
                             <th>Excluir</th>
@@ -47,10 +47,19 @@
                                         <input type="checkbox" id="row{{$chamada->id}}" class="tableflat">
                                     </td>
                                     <td>{{$chamada->data_inicio}}</td>
-                                    <td>{{$chamada->data_fim}}</td>
                                     <td>{{$chamada->nome_requeridor}}</td>
                                     <td>{{$chamada->descricao}}</td>
                                     <td>{{$chamada->categoria->nome}}</td>
+
+                                    <td class="iconeListagem">
+                                        <form method="POST" action="chamadas/saida/{{$chamada->id}}" enctype="multipart/form-data" id="demo-form"
+                                              data-parsley-validate>
+                                            <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
+                                            <input type="hidden" class="form-control" name="hora_fim"
+                                                   value= "1"/>
+                                            <input class="btn btn-dark" type="submit" id="saida" value="Saída" {{isset($chamada->hora_fim) ? "disabled = 'disabled'": ''}}>
+                                        </form></td>
+
                                     <td><i class="fa fa-search detalhesChamada" iid="{{$chamada->id}}" style="cursor: pointer"></i></td>
                                     <td class="iconeListagem"><a
                                                 href="chamadas/editar/{{$chamada->id}}"><i
@@ -105,7 +114,7 @@
                             <div class="modal-body">
                                 <div class="list-group">
                                     <h4 class="list-group-item-heading">Datas</h4>
-                                    <p class="list-group-item-text">Início: {{date("d/m/Y", strtotime($chamada->data_inicio))}} &nbsp; Fim: {{date("d/m/Y", strtotime($chamada->data_fim))}}</p>
+                                    <p class="list-group-item-text">Data: {{date("d/m/Y", strtotime($chamada->data_inicio))}}</p>
                                 </div>
 
                                 <div class="list-group">
@@ -193,9 +202,6 @@
                     'aTargets': [0]},
                 {'bSortable': true,
                     'aTargets': [1],
-                    render: $.fn.dataTable.render.moment( 'DD/MM/YYYY' )},
-                {'bSortable': true,
-                    'aTargets': [2],
                     render: $.fn.dataTable.render.moment( 'DD/MM/YYYY' )},
                 {'bSortable': false,
                     'aTargets': [6]},

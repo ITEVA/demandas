@@ -294,7 +294,7 @@ abstract class AbstractCrudController extends Controller
     protected function horaAtual()
     {
         date_default_timezone_set('America/Fortaleza');
-        return date('H:i');
+        return date('H:i:s');
     }
 
     /**

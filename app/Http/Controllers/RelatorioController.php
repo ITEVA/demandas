@@ -207,21 +207,64 @@ class RelatorioController extends AbstractCrudController
         $pdf->Cell(595, 14, "RELATÓRIO DE CHAMADAS: " . $userName , 0, 0, "C");
 
         $pdf->SetXY(20, 135);
-        $pdf->Cell(200, 20, 'Data', 1, 0, "C");
-        $pdf->Cell(200, 20, 'Nome requeridor', 1, 0, "C");
-        $pdf->Cell(156, 20, 'Categoria', 1, 0, "C");
+        $pdf->Cell(100, 20, 'Data', 1, 0, "C");
+        $pdf->Cell(150, 20, 'Nome requeridor', 1, 0, "C");
+        $pdf->Cell(150, 20, 'Categoria', 1, 0, "C");
+        $pdf->Cell(156, 20, 'Tempo decorrido', 1, 0, "C");
 
         if(count($chamadas) > 0) {
             $pdf->SetY($pdf->GetY() + 20);
+            $totalHoras = 0;
+            $totalMin = 0;
+            $minFinal = 0;
             foreach ($chamadas as $chamada) {
                 $data =  parent::formatarDataBr($chamada->data_inicio);
+
+                $partesF = explode(':', $chamada->hora_fim);
+                $partesI = explode(':', $chamada->hora_inicio);
+
+                $horaF = $partesF[0];
+                $minF = $partesF[1];
+
+                $horaI = $partesI[0];
+                $minI = $partesI[1];
+
+                $horaFinal = ((($horaF - $horaI) < 10) ? '0' : '').($horaF - $horaI);
+
+                if(($minF < $minI)) {
+                    $minFinal = (($minF - $minI) + 60);
+                    $horaFinal = ((($horaF - $horaI) < 10) ? '0' : '').(($horaF - $horaI) - 1);
+                }
+
+                else{
+                    $minFinal = ((($minF - $minI) < 10) ? '0' : '') . ($minF - $minI);
+                }
+
+                $total = ($horaFinal.':'.$minFinal.':00h');
+
                 $pdf->SetX(20);
-                $pdf->Cell(200, 14, $data, 1, 0, "C");
-                $pdf->Cell(200, 14, $chamada->nome_requeridor, 1, 0, "C");
-                $pdf->Cell(156, 14, $chamada->categoria->nome, 1, 0, "C");
+                $pdf->Cell(100, 14, $data, 1, 0, "C");
+                $pdf->Cell(150, 14, $chamada->nome_requeridor, 1, 0, "C");
+                $pdf->Cell(150, 14, $chamada->categoria->nome, 1, 0, "C");
+                $pdf->Cell(156, 14, $total, 1, 0, "C");
                 $pdf->SetY($pdf->GetY() + 14);
+                $totalHoras = $totalHoras + $horaFinal;
+                $totalMin = $totalMin + $minFinal;
             }
+
+
+            if($totalMin > 60){
+                $totalMin = $totalMin - 60;
+                $totalHoras++;
+            }
+
+            $pdf->SetXY(20,$pdf->GetY());
+            $pdf->Cell(100, 20, '', 0, 0, "C");
+            $pdf->Cell(150, 20, '', 0, 0, "C");
+            $pdf->Cell(150, 20, 'Total','L, R, B', 0, "C");
+            $pdf->Cell(156, 20, ($totalHoras.':'.$totalMin.':00h'), 'L, R, B', 0, "C");
         }
+
 
         //Rodape
         $pdf->SetAutoPageBreak(5);
