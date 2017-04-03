@@ -32,6 +32,7 @@
                             <th>Data</th>
                             <th>Requeridor</th>
                             <th>Descrição</th>
+                            <th>Pessoa(s)</th>
                             <th>Categoria</th>
                             <th>Saída</th>
                             <th>Visualizar</th>
@@ -49,6 +50,11 @@
                                     <td>{{$chamada->data_inicio}}</td>
                                     <td>{{$chamada->nome_requeridor}}</td>
                                     <td>{{$chamada->descricao}}</td>
+                                    <td>
+                                        @foreach($chamada->usuariosChamados as $user)
+                                            <p class="list-group-item-text">{{$user->usuario->nome}}</p>
+                                        @endforeach
+                                    </td>
                                     <td>{{$chamada->categoria->nome}}</td>
 
                                     <td class="iconeListagem">
@@ -112,8 +118,13 @@
                                 <h4 class="modal-title">Detalhes Chamada</h4>
                             </div>
                             <div class="modal-body">
+                                <div class="list-group {{(($chamada->status) == 1 ? 'statusS' : 'statusA')}}">
+                                    <h4 class="list-group-item-heading ">Status</h4>
+                                    <p class="list-group-item-text {{(($chamada->status) == 1 ? 'bg-success' : 'bg-warning')}}">{{(($chamada->status) == 1 ? 'Horário encerrado' : 'Horário em aberto')}}</p>
+                                </div>
+
                                 <div class="list-group">
-                                    <h4 class="list-group-item-heading">Datas</h4>
+                                    <h4 class="list-group-item-heading">Data</h4>
                                     <p class="list-group-item-text">Data: {{date("d/m/Y", strtotime($chamada->data_inicio))}}</p>
                                 </div>
 

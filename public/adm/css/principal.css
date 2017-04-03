@@ -18,3 +18,29 @@ a.removerCampo {
 .status {
     cursor: pointer;
 }
+
+.list-group-item-heading {
+    padding-top: 10px;
+}
+
+.list-group {
+    padding-left: 15px;
+    margin-bottom: 0;
+    padding-bottom: 10px;
+}
+
+.statusS{
+    background-color: #DFF0D8;
+}
+
+.statusA{
+    background-color: #FCF8E3;
+}
+
+.modal-body {
+    position: relative;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 0;
+    padding-right: 0;
+}
