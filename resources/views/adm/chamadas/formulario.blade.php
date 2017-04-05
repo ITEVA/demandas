@@ -35,6 +35,18 @@
                         </div>
 
                         <div class="form-group col-md-5 col-xs-12">
+                            <label for="nome" style="display:{{$verifDisable == 0 ? "none" : ""}}">Hora Início*</label>
+                            <input type={{$verifDisable == 0 ? "hidden" : "time"}} class="form-control" name="hora_inicio"
+                                   value="{{isset($horaAtual) ? $horaAtual : $chamada->hora_inicio}}"/>
+                        </div>
+
+                        <div class="form-group col-md-5 col-xs-12" style="display:{{$verifDisable == 0 ? "none" : ""}}">
+                            <label for="nome">Hora Fim*</label>
+                            <input type={{$verifDisable == 0 ? "hidden" : "time"}} class="form-control" name="hora_fim"
+                                   value="{{isset($horaAtual) ? $horaAtual : $chamada->hora_fim}}"/>
+                        </div>
+
+                        <div class="form-group col-md-5 col-xs-12">
                             <label for="nome">Requeridor*</label>
                             <input type="text" class="form-control" name="nome_requeridor"
                                    value="{{old('nome_requeridor') !== null ? old('nome_requeridor') : $chamada->nome_requeridor}}"/>
@@ -82,12 +94,6 @@
                             <label for="descricao">Descrição</label>
                             <textarea class="form-control" name="descricao">{{old('descricao') !== null ? old('descricao') : $chamada->descricao}}</textarea>
                         </div>
-                        <div class="form-group col-md-5 col-xs-12" style="visibility: hidden">
-                            <label for="nome">Hora Início*</label>
-                            <input type="time" class="form-control" name="hora_inicio"
-                                   value="{{isset($horaAtual) ? $horaAtual : $chamada->hora_inicio}}"/>
-                        </div>
-
 
                         <div class="ln_solid col-md-12 col-xs-12"></div>
                         <div class="form-group  col-md-12 col-xs-12">

@@ -252,7 +252,7 @@ class RelatorioController extends AbstractCrudController
                 $totalMin = $totalMin + $minFinal;
             }
 
-            if($totalMin > 60){
+            while($totalMin > 60){
                 $totalMin = $totalMin - 60;
                 $totalHoras++;
             }

@@ -29,11 +29,19 @@ class ChamadaController extends AbstractCrudController
         $idLogado = Auth::user()->id;
         $horaAtual = parent::horaAtual();
 
+        $dominio= $_SERVER['HTTP_HOST'];
+        $url = $dominio. $_SERVER['REQUEST_URI'];
+        $verificacao = explode("/", $url);
+        $urlVerificacao = $verificacao[2];
+
+        $verifDisable = strcmp($urlVerificacao, "novo");
+
         return parent::novo()
             ->with('categorias', $categorias)
             ->with('users', $users)
             ->with('idLogado', $idLogado)
-            ->with('horaAtual', $horaAtual);
+            ->with('horaAtual', $horaAtual)
+            ->with('verifDisable', $verifDisable);
     }
 
     public function editar($id)
@@ -43,11 +51,19 @@ class ChamadaController extends AbstractCrudController
         $idLogado = Auth::user()->id;
         $usersChamados = ChamadaUser::where(['id_chamada'=>$id, 'id_empregador' => Auth::user()->id_empregador])->get();
 
+        $dominio= $_SERVER['HTTP_HOST'];
+        $url = $dominio. $_SERVER['REQUEST_URI'];
+        $verificacao = explode("/", $url);
+        $urlVerificacao = $verificacao[2];
+
+        $verifDisable = strcmp($urlVerificacao, "novo");
+
         return parent::editar($id)
             ->with('categorias', $categorias)
             ->with('users', $users)
             ->with('idLogado', $idLogado)
-            ->with('usersChamados', $usersChamados);
+            ->with('usersChamados', $usersChamados)
+            ->with('verifDisable', $verifDisable);
     }
 
     public function salvar(ChamadaRequest $request){
@@ -57,10 +73,12 @@ class ChamadaController extends AbstractCrudController
 
         $request->offsetUnset('usuarios');
         $request->offsetUnset('salvar');
+        $request->offsetUnset('hora_fim');
 
         try {
             $chamada = Chamada::create($this->formatOutput($request->except('_token')));
             $this->salvarUsariosChamados($users, $chamada->id);
+
 
             return redirect()
                 ->action('ChamadaController@listar');
@@ -94,7 +112,8 @@ class ChamadaController extends AbstractCrudController
 
     public function saida(Request $request, $id){
         $dados = array(
-            "hora_fim" => parent::horaAtual()
+            "hora_fim" => parent::horaAtual(),
+            "status" => 1
         );
 
         $chamada = Chamada::find($id);
