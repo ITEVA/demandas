@@ -59,13 +59,12 @@
                                 </option>
                                 @if (count($categorias) > 0)
                                     @foreach ($categorias as $categoria)
-                                        <option {{$categoria->id == old('categoria') || (old('categoria') === null) ? 'selected="selected"' : ''}}
+                                        <option {{$categoria->id === old('categoria') ? 'selected="selected"' : ''}}
                                                 value="{{$categoria->id}}">{{$categoria->nome}}</option>
                                     @endforeach
                                 @endif
                             </select>
                         </div>
-
 
                         <div class="form-group col-md-5 col-xs-12">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12">Pessoas*</label>

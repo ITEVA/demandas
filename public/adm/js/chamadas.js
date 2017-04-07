@@ -1,6 +1,5 @@
 $(document).ready(function () {
-    $('.detalhesChamada').click(function(){
+    $(document).on('click', '.detalhesChamada', (function (){
         $('#detalhesChamadas'+$(this).attr('iid')).modal();
-
-    });
+    }));
 });

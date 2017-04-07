@@ -182,6 +182,15 @@ class RelatorioController extends AbstractCrudController
             $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador])->whereIn('id', $idsFiltro)->get();
         }
 
+        foreach ($chamadas as $chamada){
+            $chamada->pessoas = "";
+            foreach ($chamada->usuariosChamados as $a) {
+                $chamada->pessoas = $chamada->pessoas.$a->usuario->apelido."\n";
+            }
+        }
+
+        
+        date_default_timezone_set('America/Sao_Paulo');
         $dataEn = parent::dataAtualEn();
         $dataBr = parent::dataAtualBr();
         $diaSemana = parent::diaSemana($dataEn);
@@ -207,10 +216,11 @@ class RelatorioController extends AbstractCrudController
         $pdf->Cell(595, 14, "RELATÓRIO DE CHAMADAS: " . $userName , 0, 0, "C");
 
         $pdf->SetXY(20, 135);
-        $pdf->Cell(100, 20, 'Data', 1, 0, "C");
-        $pdf->Cell(150, 20, 'Nome requeridor', 1, 0, "C");
+        $pdf->Cell(80, 20, 'Data', 1, 0, "C");
+        $pdf->Cell(90, 20, 'Nome requeridor', 1, 0, "C");
+        $pdf->Cell(150, 20, 'Pessoa(s)', 1, 0, "C");
         $pdf->Cell(150, 20, 'Categoria', 1, 0, "C");
-        $pdf->Cell(156, 20, 'Tempo decorrido', 1, 0, "C");
+        $pdf->Cell(80, 20, 'Tempo', 1, 0, "C");
 
         if(count($chamadas) > 0) {
             $pdf->SetY($pdf->GetY() + 20);
@@ -242,12 +252,26 @@ class RelatorioController extends AbstractCrudController
 
                 $total = ($horaFinal.':'.$minFinal.':00h');
 
+                $nomesQ = explode("\n", $chamada->pessoas);
+
                 $pdf->SetX(20);
-                $pdf->Cell(100, 14, $data, 1, 0, "C");
-                $pdf->Cell(150, 14, $chamada->nome_requeridor, 1, 0, "C");
-                $pdf->Cell(150, 14, $chamada->categoria->nome, 1, 0, "C");
-                $pdf->Cell(156, 14, $total, 1, 0, "C");
+                $pdf->Cell(80, 14, $data, 'T, L, R', 0, "C");
+                $pdf->Cell(90, 14, $chamada->nome_requeridor, 'T, L, R', 0, "C");
+                $pdf->Cell(150, 14, $nomesQ[0], 'T, L, R', 0, "C");
+                $pdf->Cell(150, 14, $chamada->categoria->nome, 'T, L, R', 0, "C");
+                $pdf->Cell(80, 14, $total, 'T, L, R', 0, "C");
                 $pdf->SetY($pdf->GetY() + 14);
+
+                for ($i = 1; $i < count($nomesQ); $i++) {
+                    $pdf->SetX(20);
+                    $pdf->Cell(80, 14, "", 'L, R', 0, "C");
+                    $pdf->Cell(90, 14, "", 'L, R', 0, "C");
+                    $pdf->Cell(150, 14, $nomesQ[$i], 'L, R', 0, "C");
+                    $pdf->Cell(150, 14, "", 'L, R', 0, "C");
+                    $pdf->Cell(80, 14, "", 'L, R', 0, "C");
+                    $pdf->SetY($pdf->GetY() + 14);
+                }
+
                 $totalHoras = $totalHoras + $horaFinal;
                 $totalMin = $totalMin + $minFinal;
             }
@@ -258,12 +282,11 @@ class RelatorioController extends AbstractCrudController
             }
 
             $pdf->SetXY(20,$pdf->GetY());
-            $pdf->Cell(100, 20, '', 0, 0, "C");
-            $pdf->Cell(150, 20, '', 0, 0, "C");
-            $pdf->Cell(150, 20, 'Total','L, R, B', 0, "C");
-            $pdf->Cell(156, 20, ($totalHoras.':'.$totalMin.':00h'), 'L, R, B', 0, "C");
+            $pdf->Cell(100, 20, '', 'T', 0, "C");
+            $pdf->Cell(220, 20, '', 'T', 0, "C");
+            $pdf->Cell(150, 20, 'Total',1, 0, "C");
+            $pdf->Cell(80, 20, ($totalHoras.':'.$totalMin.':00h'), 1, 0, "C");
         }
-
 
         //Rodape
         $pdf->SetAutoPageBreak(5);

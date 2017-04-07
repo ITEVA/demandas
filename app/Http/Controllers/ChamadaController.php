@@ -20,7 +20,7 @@ class ChamadaController extends AbstractCrudController
     public function __construct()
     {
         parent::__construct('auth');
-    }
+}
 
     public function novo()
     {
@@ -78,7 +78,6 @@ class ChamadaController extends AbstractCrudController
         try {
             $chamada = Chamada::create($this->formatOutput($request->except('_token')));
             $this->salvarUsariosChamados($users, $chamada->id);
-
 
             return redirect()
                 ->action('ChamadaController@listar');

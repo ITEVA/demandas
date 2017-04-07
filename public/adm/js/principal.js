@@ -60,3 +60,4 @@ function ativarMascaras(){
     $('.cep').mask('00.000-000');
     $('.money').maskMoney({allowNegative: true, thousands:'.', decimal:',', affixesStay: false});
 }
+
