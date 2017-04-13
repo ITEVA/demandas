@@ -30,20 +30,25 @@
 
                         <div class="form-group col-md-5 col-xs-12">
                             <label for="nome">Data*</label>
-                            <input type="text" class="form-control date date-picker" name="data_inicio"
+                            <input type="text" class="form-control date date-picker dataInicio" name="data_inicio"
                                    value="{{old('data_inicio') !== null ? old('data_inicio') : $chamada->data_inicio}}"/>
                         </div>
 
+                        <div class="form-group col-md-5 col-xs-12" style="{{$verifDisable == 3 ? "display:block" : "display:none"}}">
+                            <label for="nome">Data Fim*</label>
+                            <input type="text" class="form-control date date-picker dataInicio" name="data_fim" value=""/>
+                        </div>
+
                         <div class="form-group col-md-5 col-xs-12">
-                            <label for="nome" style="display:{{$verifDisable == 0 ? "none" : ""}}">Hora Início*</label>
-                            <input type={{$verifDisable == 0 ? "hidden" : "time"}} class="form-control" name="hora_inicio"
+                            <label for="nome" style="display:{{$verifDisable == 1 || $verifDisable == 3 || $verifDisable == 2 ? "" : "none"}}">Hora Início*</label>
+                            <input type="{{$verifDisable == 1 || $verifDisable == 3 || $verifDisable == 2 ? "time" : "hidden"}}" class="form-control horaInicio" name="hora_inicio"
                                    value="{{isset($horaAtual) ? $horaAtual : $chamada->hora_inicio}}"/>
                         </div>
 
-                        <div class="form-group col-md-5 col-xs-12" style="display:{{$verifDisable == 0 ? "none" : ""}}">
+                        <div class="form-group col-md-5 col-xs-12" style="display:{{$verifDisable == 3 ? "" : "none"}}">
                             <label for="nome">Hora Fim*</label>
-                            <input type={{$verifDisable == 0 ? "hidden" : "time"}} class="form-control" name="hora_fim"
-                                   value="{{isset($horaAtual) ? $horaAtual : $chamada->hora_fim}}"/>
+                            <input type="{{$verifDisable == 3 ? "time" : "hidden"}}" class="form-control horaFim" name="hora_fim"
+                                   value="" {{$verifDisable == 3 ? "" : "disabled = 'disabled'"}}/>
                         </div>
 
                         <div class="form-group col-md-5 col-xs-12">
@@ -94,9 +99,12 @@
                             <textarea class="form-control" name="descricao">{{old('descricao') !== null ? old('descricao') : $chamada->descricao}}</textarea>
                         </div>
 
+                        <input type="hidden" name= "agendar" value="{{$verifDisable == 2 ? "1" : "0"}}"/>
+                        <input type="hidden" name= "status" value="{{$verifDisable == 3 ? "1" : "0"}}"/>
+
                         <div class="ln_solid col-md-12 col-xs-12"></div>
                         <div class="form-group  col-md-12 col-xs-12">
-                            <input type="submit" name="salvar" value="Salvar" class="btn btn-success">
+                            <input onclick="{{$verifDisable == 2 ? "notify()" : ""}}" type="submit" name="salvar" value="Salvar" class="btn btn-success">
                             <a href="chamadas">Voltar</a>
                         </div>
                         <div class="form-group  col-md-12 col-xs-12">
@@ -133,6 +141,18 @@
                 allowClear: true
             });
         });
+
+        function notify() {
+            Notification.requestPermission(function() {
+                var hora = $('.horaInicio').val();
+                var dia = $('.dataInicio').val();
+                var notification = new Notification("Chamada agendada!", {
+                    icon: 'http://reservation.gezinomi.com/Content/Talep/img/icon-success.png',
+                    body: "Sua demanda foi agendada para o dia " + dia + ",às " + hora + " enviaremos uma notificação para seu perfil para lembrá-lo."
+                });
+            });
+        }
+
     </script>
     <!-- /select2 -->
 @endsection

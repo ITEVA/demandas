@@ -45,6 +45,17 @@ Route::post('/permissoes/removerLote', 'PermissaoController@removerLote');
 Route::post('/permissoes/editarLote', 'PermissaoController@editarLote');
 Route::post('/permissoes/atualizarLote', 'PermissaoController@atualizarLote');
 
+//Rotas para gestão de chamadas
+Route::get('/chamadas', 'ChamadaController@listar');
+Route::get('/chamadas/novo', 'ChamadaController@novo');
+Route::get('/chamadas/agendar', 'ChamadaController@novo');
+Route::get('/chamadas/corrigir', 'ChamadaController@novo');
+Route::post('/chamadas/salvar', 'ChamadaController@salvar');
+Route::get('/chamadas/editar/{id}', 'ChamadaController@editar');
+Route::post('/chamadas/atualizar/{id}', 'ChamadaController@atualizar');
+Route::post('/chamadas/saida/{id}', 'ChamadaController@saida');
+Route::post('/chamadas/removerLote', 'ChamadaController@removerLote');
+
 //Rotas para gestão de relatórios
 Route::get('/relatorios/usuarios', 'RelatorioController@listarUsuarios');
 Route::post('/relatorios/usuarios', 'RelatorioController@listarFiltroUsuarios');
@@ -53,12 +64,3 @@ Route::post('/relatorios/usuarios/imprimir', 'RelatorioController@imprimirUsuari
 Route::get('/relatorios/chamadas', 'RelatorioController@listarChamadas');
 Route::post('/relatorios/chamadas', 'RelatorioController@listarFiltroChamadas');
 Route::post('/relatorios/chamadas/imprimir', 'RelatorioController@imprimirChamadas');
-
-//Rotas para gestão de chamadas
-Route::get('/chamadas', 'ChamadaController@listar');
-Route::get('/chamadas/novo', 'ChamadaController@novo');
-Route::post('/chamadas/salvar', 'ChamadaController@salvar');
-Route::get('/chamadas/editar/{id}', 'ChamadaController@editar');
-Route::post('/chamadas/atualizar/{id}', 'ChamadaController@atualizar');
-Route::post('/chamadas/saida/{id}', 'ChamadaController@saida');
-Route::post('/chamadas/removerLote', 'ChamadaController@removerLote');

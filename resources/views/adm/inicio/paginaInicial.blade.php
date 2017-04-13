@@ -20,6 +20,14 @@
                     <span class="count_bottom"><i class="green"><a class="green" href="permissoes">Ver mais!</a> </i></span>
                 </div>
             </div>
+            <div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
+                <div class="left"></div>
+                <div class="right">
+                    <span class="count_top"><i class="fa fa-bullhorn"></i> Total de chamadas</span>
+                    <div class="count">{{count($chamadas)}}</div>
+                    <span class="count_bottom"><i class="green"><a class="green" href="chamadas">Ver mais!</a> </i></span>
+                </div>
+            </div>
         </div>
         <!-- /top tiles -->
     </div>

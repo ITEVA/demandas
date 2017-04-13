@@ -13,6 +13,12 @@
                 <a href="chamadas/removerLote" id="removerLote" class="btn btn-success pull-right">
                     <i class="fa fa-trash"></i>&nbsp;Remover
                 </a>
+                <a href="chamadas/agendar" class="btn btn-success pull-right">
+                    <i class="fa fa-calendar"></i>&nbsp;Agendar
+                </a>
+                <a href="chamadas/corrigir" class="btn btn-success pull-right">
+                    <i class="fa fa-pencil"></i>&nbsp;Corrigir
+                </a>
                 <a href="chamadas/novo" class="btn btn-success pull-right">
                     <i class="fa fa-plus"></i>&nbsp;Novo
                 </a>
@@ -63,10 +69,20 @@
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
                                             <input type="hidden" class="form-control" name="hora_fim"
                                                    value= "1"/>
-                                            <input class="btn btn-dark" type="submit" id="saida" value="Saída" {{isset($chamada->hora_fim) ? "disabled = 'disabled'": ''}}>
-                                        </form></td>
 
-                                    <td><i class="fa fa-search detalhesChamada" iid="{{$chamada->id}}" style="cursor: pointer"></i></td>
+                                            <span style="display: none">{{date_default_timezone_set('America/Sao_Paulo')}}</span>
+                                            <input class="btn btn-dark" type="submit" id="saida"
+                                                   value="{{$chamada->agendar == 1 && $chamada->data_inicio >= date('Y-m-d') && $chamada->hora_inicio > date('H:i:s') ? "Aguarde" : 'Saída'}}"
+                                                   {{isset($chamada->hora_fim) || $chamada->data_inicio >= date('Y-m-d') && $chamada->hora_inicio > date('H:i:s')  ? "disabled = 'disabled'" : ""}}
+                                                   title="{{$chamada->agendar == 1 ? "Horário agendado" : 'Você já deu saída nesse horário'}}"
+                                            />
+                                        </form>
+                                    </td>
+
+                                    <td>
+                                        <i class="fa fa-search detalhesChamada" iid="{{$chamada->id}}" style="cursor: pointer"></i>
+                                    </td>
+
                                     <td class="iconeListagem"><a
                                                 href="chamadas/editar/{{$chamada->id}}"><i
                                                     class="fa fa-pencil-square-o"></i></a></td>

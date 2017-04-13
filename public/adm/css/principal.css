@@ -44,3 +44,16 @@ a.removerCampo {
     padding-left: 0;
     padding-right: 0;
 }
+
+div.notificacaoOn{
+    position: absolute;
+    height: 9px;
+    width: 9px;
+    cursor: pointer;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    border-radius: 100%;
+    background-color: #5EB65F;
+    top: 18px;
+    border: 1px solid #EDEDED;
+}

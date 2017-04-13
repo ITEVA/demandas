@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Categoria;
+use App\ChamadaAgendada;
 use App\ChamadaUser;
 use App\User;
 use Illuminate\Http\Request;
@@ -29,12 +30,27 @@ class ChamadaController extends AbstractCrudController
         $idLogado = Auth::user()->id;
         $horaAtual = parent::horaAtual();
 
+        $verifDisable = 0;
         $dominio= $_SERVER['HTTP_HOST'];
         $url = $dominio. $_SERVER['REQUEST_URI'];
         $verificacao = explode("/", $url);
         $urlVerificacao = $verificacao[2];
 
-        $verifDisable = strcmp($urlVerificacao, "novo");
+        if($urlVerificacao == "novo"){
+            $verifDisable = 0;
+        }
+
+        if($urlVerificacao == "editar"){
+            $verifDisable = 1;
+        }
+
+        if($urlVerificacao == "agendar"){
+            $verifDisable = 2;
+        }
+
+        if($urlVerificacao == "corrigir"){
+            $verifDisable = 3;
+        }
 
         return parent::novo()
             ->with('categorias', $categorias)
@@ -56,7 +72,7 @@ class ChamadaController extends AbstractCrudController
         $verificacao = explode("/", $url);
         $urlVerificacao = $verificacao[2];
 
-        $verifDisable = strcmp($urlVerificacao, "novo");
+        $verifDisable = 1;
 
         return parent::editar($id)
             ->with('categorias', $categorias)
@@ -73,11 +89,11 @@ class ChamadaController extends AbstractCrudController
 
         $request->offsetUnset('usuarios');
         $request->offsetUnset('salvar');
-        $request->offsetUnset('hora_fim');
 
         try {
             $chamada = Chamada::create($this->formatOutput($request->except('_token')));
             $this->salvarUsariosChamados($users, $chamada->id);
+            $this->salvarChamadasAgendadas($users, $chamada->id, $request->data_inicio);
 
             return redirect()
                 ->action('ChamadaController@listar');
@@ -112,7 +128,8 @@ class ChamadaController extends AbstractCrudController
     public function saida(Request $request, $id){
         $dados = array(
             "hora_fim" => parent::horaAtual(),
-            "status" => 1
+            "status" => 1,
+            "agendar" => 0
         );
 
         $chamada = Chamada::find($id);
@@ -134,10 +151,29 @@ class ChamadaController extends AbstractCrudController
         }
     }
 
+    public function salvarChamadasAgendadas($users, $idChamada, $data){
+        foreach ($users as $user) {
+            $dados = array(
+                "data" => parent::formatarDataEn($data),
+                "id_usuario" => $user,
+                "id_chamada" => $idChamada,
+                "id_empregador" => Auth::user()->id_empregador
+            );
+            ChamadaAgendada::create($dados);
+        }
+    }
+
     public function removerUsuariosChamados($id){
         $users = ChamadaUser::where(['id_chamada'=>$id, 'id_empregador' => Auth::user()->id_empregador])->get();
         foreach ($users as $user) {
             $user->delete();
+        }
+    }
+
+    public function removerChamadasAgendadas($id){
+        $chamadasAgendadas = ChamadaAgendada::where(['id_chamada'=>$id, 'id_empregador' => Auth::user()->id_empregador])->get();
+        foreach ($chamadasAgendadas as $chamadasAgendada) {
+            $chamadasAgendada->delete();
         }
     }
 

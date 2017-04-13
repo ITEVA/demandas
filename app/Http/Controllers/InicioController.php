@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Chamada;
 use App\User;
 use App\Permissao;
 use Illuminate\Http\Request;
@@ -32,11 +33,13 @@ class InicioController extends AbstractCrudController
 
         $usuarios = User::where($this->getFilter())->get();
         $permissoes = Permissao::where($this->getFilter())->get();
+        $chamadas = Chamada::where($this->getFilter())->get();
 
         return view('adm.inicio.paginaInicial')
             ->with('permissoes', $permissoes)
             ->with('usuarios', $usuarios)
-            ->with('itensPermitidos', $itensPermitidos);
+            ->with('itensPermitidos', $itensPermitidos)
+            ->with('chamadas', $chamadas);
     }
 
     protected function getFilter()
