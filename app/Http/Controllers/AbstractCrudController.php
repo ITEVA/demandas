@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\PermissaoClasse;
 use App\Chamada;
+use App\User;
+use App\ChamadaAgendada;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -40,6 +42,9 @@ abstract class AbstractCrudController extends Controller
         if($this->checkStatus()) return redirect('sair');
         if($this->checkPermissao()) return redirect('error404');
         $itensPermitidos = $this->getClassesPermissao(Auth::user()->permissao->id);
+        $chamadasAgendadas = ChamadaAgendada::where($this->getFilter())->get();
+        $usuarios = User::where($this->getFilter())->get();
+        $chamadas = Chamada::where($this->getFilter())->get();
 
         $entity = $this->model;
 
@@ -47,7 +52,10 @@ abstract class AbstractCrudController extends Controller
 
         return view('adm.'.$this->view . '.listagem')
             ->with($this->view, $entities)
-            ->with('itensPermitidos', $itensPermitidos);
+            ->with('itensPermitidos', $itensPermitidos)
+            ->with('usuarios', $usuarios)
+            ->with('chamadas', $chamadas)
+            ->with('chamadasAgendadas', $chamadasAgendadas);
     }
 
     public function novo()
@@ -55,6 +63,9 @@ abstract class AbstractCrudController extends Controller
         if($this->checkStatus()) return redirect('sair');
         if($this->checkPermissao()) return redirect('error404');
         $itensPermitidos = $this->getClassesPermissao(Auth::user()->permissao->id);
+        $chamadasAgendadas = ChamadaAgendada::where($this->getFilter())->get();
+        $usuarios = User::where($this->getFilter())->get();
+        $chamadas = Chamada::where($this->getFilter())->get();
 
         $entity = $this->model;
         $object = $entity::getEmpty();
@@ -62,7 +73,10 @@ abstract class AbstractCrudController extends Controller
         return view('adm.'.$this->view . '.formulario')
             ->with($this->class, $this->formatInput($object))
             ->with('action', $this->view . '/salvar')
-            ->with('itensPermitidos', $itensPermitidos);
+            ->with('itensPermitidos', $itensPermitidos)
+            ->with('chamadasAgendadas', $chamadasAgendadas)
+            ->with('chamadas', $chamadas)
+            ->with('usuarios', $usuarios);
     }
 
     public function editar($id)
@@ -70,12 +84,18 @@ abstract class AbstractCrudController extends Controller
         if($this->checkStatus()) return redirect('sair');
         if($this->checkPermissao()) return redirect('error404');
         $itensPermitidos = $this->getClassesPermissao(Auth::user()->permissao->id);
+        $chamadasAgendadas = ChamadaAgendada::where($this->getFilter())->get();
+        $usuarios = User::where($this->getFilter())->get();
+        $chamadas = Chamada::where($this->getFilter())->get();
 
         eval('$object=' . $this->model . '::find($id);');
         return view('adm.'.$this->view . '.formulario')
             ->with($this->class, $this->formatInput($object))
             ->with('action', $this->view . '/atualizar/' . $id)
-            ->with('itensPermitidos', $itensPermitidos);
+            ->with('itensPermitidos', $itensPermitidos)
+            ->with('chamadasAgendadas', $chamadasAgendadas)
+            ->with('chamadas', $chamadas)
+            ->with('usuarios', $usuarios);
     }
 
     protected function salvarDados($request)

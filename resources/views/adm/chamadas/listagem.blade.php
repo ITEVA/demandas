@@ -72,8 +72,8 @@
 
                                             <span style="display: none">{{date_default_timezone_set('America/Sao_Paulo')}}</span>
                                             <input class="btn btn-dark" type="submit" id="saida"
-                                                   value="{{$chamada->agendar == 1 && $chamada->data_inicio >= date('Y-m-d') && $chamada->hora_inicio > date('H:i:s') ? "Aguarde" : 'Saída'}}"
-                                                   {{isset($chamada->hora_fim) || $chamada->data_inicio >= date('Y-m-d') && $chamada->hora_inicio > date('H:i:s')  ? "disabled = 'disabled'" : ""}}
+                                                   value="{{$chamada->agendar == 1 && (strtotime($chamada->data_inicio.$chamada->hora_inicio) >= strtotime(date('Y-m-d H:i:s'))) ? "Aguarde" : 'Saída'}}"
+                                                   {{isset($chamada->hora_fim) || (strtotime($chamada->data_inicio.$chamada->hora_inicio) >= strtotime(date('Y-m-d H:i:s'))) ? "disabled = 'disabled'" : ""}}
                                                    title="{{$chamada->agendar == 1 ? "Horário agendado" : 'Você já deu saída nesse horário'}}"
                                             />
                                         </form>

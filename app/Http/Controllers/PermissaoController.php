@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PermissaoRequest;
 use App\Permissao;
+use App\Chamada;
+use App\ChamadaAgendada;
 use App\PermissaoClasse;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -23,14 +25,20 @@ class PermissaoController extends AbstractCrudController
     {
         $permissoes = Permissao::where($this->getFilter())->get();
         $permissoesClasses = $this->buscarClasses($permissoes);
+        $chamadas = Chamada::where($this->getFilter())->get();
+        $chamadasAgendadas = ChamadaAgendada::where($this->getFilter())->get();
 
         return parent::listar()
-            ->with('permissoesClasses', $permissoesClasses);
+            ->with('permissoesClasses', $permissoesClasses)
+            ->with('chamadasAgendadas', $chamadasAgendadas)
+            ->with('chamadas', $chamadas);
     }
 
     public function editar($id)
     {
         $permissoes = PermissaoClasse::where(['id_permissao'=>$id, 'id_empregador' => Auth::user()->id_empregador])->get();
+        $chamadas = Chamada::where($this->getFilter())->get();
+        $chamadasAgendadas = ChamadaAgendada::where($this->getFilter())->get();
 
         $permissoesAtuais = array();
 
@@ -39,7 +47,9 @@ class PermissaoController extends AbstractCrudController
         }
 
         return parent::editar($id)
-            ->with('permissoesAtuais', $permissoesAtuais);
+            ->with('permissoesAtuais', $permissoesAtuais)
+            ->with('chamadasAgendadas', $chamadasAgendadas)
+            ->with('chamadas', $chamadas);
     }
 
     public function salvar(PermissaoRequest $request)

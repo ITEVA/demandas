@@ -1695,11 +1695,13 @@ ul.msg_list li a .time {
     font-weight: bold;
     position: absolute;
     right: 35px;
+    width: 60px;
 }
 
 ul.msg_list li a .message {
     display: block !important;
     font-size: 11px;
+    width: 185px;
 }
 
 .dropdown-menu.msg_list {

@@ -8,6 +8,7 @@ use App\Permissao;
 use Illuminate\Http\Request;
 use App\User;
 use App\Pedido;
+use App\ChamadaAgendada;
 use App\ProdutoPedido;
 use Illuminate\Support\Facades\Auth;
 use Anouar\Fpdf\Fpdf;
@@ -33,12 +34,16 @@ class RelatorioController extends AbstractCrudController
         $usuarios = User::where(['id_empregador' => Auth::user()->id_empregador, 'id_permissao' => Auth::user()->permissao->id])->get();
         $permissoes = Permissao::where($this->getFilter())->get();
         $permissaoAnt = Auth::user()->permissao->id;
+        $chamadas = Chamada::where($this->getFilter())->get();
+        $chamadasAgendadas = ChamadaAgendada::where($this->getFilter())->get();
 
         return view('adm.relatorios.usuarios')
             ->with('itensPermitidos', $itensPermitidos)
             ->with('usuarios', $usuarios)
             ->with('permissoes', $permissoes)
-            ->with('permissaoAnt', $permissaoAnt);
+            ->with('permissaoAnt', $permissaoAnt)
+            ->with('chamadasAgendadas', $chamadasAgendadas)
+            ->with('chamadas', $chamadas);
     }
 
     protected function listarFiltroUsuarios(Request $request)
@@ -49,12 +54,16 @@ class RelatorioController extends AbstractCrudController
         $usuarios = User::where(['id_empregador' => Auth::user()->id_empregador, 'id_permissao' => $request->permissao])->get();
         $permissoes = Permissao::where($this->getFilter())->get();
         $permissaoAnt = $request->permissao;
+        $chamadas = Chamada::where($this->getFilter())->get();
+        $chamadasAgendadas = ChamadaAgendada::where($this->getFilter())->get();
 
         return view('adm.relatorios.usuarios')
             ->with('itensPermitidos', $itensPermitidos)
             ->with('usuarios', $usuarios)
             ->with('permissoes', $permissoes)
-            ->with('permissaoAnt', $permissaoAnt);
+            ->with('permissaoAnt', $permissaoAnt)
+            ->with('chamadasAgendadas', $chamadasAgendadas)
+            ->with('chamadas', $chamadas);
     }
 
     protected function imprimirUsuarios(Request $request)
@@ -120,6 +129,7 @@ class RelatorioController extends AbstractCrudController
 
         $users = User::where(['id_empregador' => Auth::user()->id_empregador])->get();
         $chamadas = Chamada::where($this->getFilter())->get();
+        $chamadasAgendadas = ChamadaAgendada::where($this->getFilter())->get();
 
         $usuarioFiltrado = 'geral';
 
@@ -127,6 +137,7 @@ class RelatorioController extends AbstractCrudController
             ->with('itensPermitidos', $itensPermitidos)
             ->with('users', $users)
             ->with('chamadas', $chamadas)
+            ->with('chamadasAgendadas', $chamadasAgendadas)
             ->with('usuarioFiltrado', $usuarioFiltrado);
     }
 
@@ -136,6 +147,8 @@ class RelatorioController extends AbstractCrudController
         $itensPermitidos = $this->getClassesPermissao(Auth::user()->permissao->id);
 
         $users = User::where(['id_empregador' => Auth::user()->id_empregador])->get();
+        $chamadas = Chamada::where($this->getFilter())->get();
+        $chamadasAgendadas = ChamadaAgendada::where($this->getFilter())->get();
 
         if($request->usuarios == 'geral')
             $chamadas = Chamada::where($this->getFilter())->get();
@@ -158,6 +171,7 @@ class RelatorioController extends AbstractCrudController
             ->with('itensPermitidos', $itensPermitidos)
             ->with('users', $users)
             ->with('chamadas', $chamadas)
+            ->with('chamadasAgendadas', $chamadasAgendadas)
             ->with('usuarioFiltrado', $usuarioFiltrado);
     }
 

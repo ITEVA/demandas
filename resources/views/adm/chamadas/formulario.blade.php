@@ -60,7 +60,7 @@
                         <div class="form-group col-md-5 col-xs-12">
                             <label>Categoria*</label>
                             <select name="id_categoria" class="form-control select2 select2-container">
-                                <option {{(isset($ids) ? 'selected="selected"' : "")}} value="">Selecione uma categoria
+                                <option>Selecione uma categoria
                                 </option>
                                 @if (count($categorias) > 0)
                                     @foreach ($categorias as $categoria)
