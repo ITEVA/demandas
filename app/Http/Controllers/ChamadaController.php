@@ -93,7 +93,7 @@ class ChamadaController extends AbstractCrudController
         try {
             $chamada = Chamada::create($this->formatOutput($request->except('_token')));
             $this->salvarUsariosChamados($users, $chamada->id);
-            $this->salvarChamadasAgendadas($users, $chamada->id, $request->data_inicio);
+            $this->salvarChamadasAgendadas($chamada->id, $request->data_inicio);
 
             return redirect()
                 ->action('ChamadaController@listar');
@@ -151,16 +151,32 @@ class ChamadaController extends AbstractCrudController
         }
     }
 
-    public function salvarChamadasAgendadas($users, $idChamada, $data){
-        foreach ($users as $user) {
-            $dados = array(
-                "data" => parent::formatarDataEn($data),
-                "id_usuario" => $user,
-                "id_chamada" => $idChamada,
-                "id_empregador" => Auth::user()->id_empregador
-            );
-            ChamadaAgendada::create($dados);
+    public function salvarChamadasAgendadas($idChamada, $data){
+        $dados = array(
+            "data" => parent::formatarDataEn($data),
+            "id_chamada" => $idChamada,
+            "id_empregador" => Auth::user()->id_empregador
+        );
+        ChamadaAgendada::create($dados);
+    }
+
+    public function removerLote(Request $request)
+    {
+        if($this->checkStatus()) return redirect('sair');
+        if($this->checkPermissao()) return redirect('error404');
+
+        $strIds = $request->all();
+        $ids = explode('-', $strIds['ids']);
+
+        foreach ($ids as $id) {
+            if (is_numeric($id)) {
+                $chamada = Chamada::find($id);
+                $this->removerUsuariosChamados($chamada->id);
+                $chamada->delete();
+            }
         }
+        return redirect()
+            ->action($this->getName() . 'Controller@listar');
     }
 
     public function removerUsuariosChamados($id){

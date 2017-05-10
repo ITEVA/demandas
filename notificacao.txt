@@ -1,0 +1,36 @@
+ <li role="presentation" class="dropdown">
+                            <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-bell notificacao" style="font-size: 20px"></i>
+                                <div class="notificacaoOn" style="display: {{count($chamadasAgendadas) > 0 && (strtotime($chamada->data_inicio.$chamada->hora_inicio) >= strtotime(date('Y-m-d H:i:s'))) ? "block" : "none"}}"></div>
+                            </a>
+                            <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
+                                @if(count($chamadasAgendadas) > 0 && (strtotime($chamada->data_inicio.$chamada->hora_inicio) >= strtotime(date('Y-m-d H:i:s'))))
+                                    @foreach($chamadasAgendadas as $chamadasAgendada)
+                                        @foreach ($usuarios as $usuario)
+                                            @if($usuario->id == $chamadasAgendada->id_usuario)
+                                                @foreach($chamadas as $chamada)
+                                                    @if($chamadasAgendada->id_chamada == $chamada->id && (strtotime($chamada->data_inicio.$chamada->hora_inicio) >= strtotime(date('Y-m-d H:i:s'))))
+                                                        <li>
+                                                            <a>
+                                                                <span class="image"><img src="adm/images/perfil/{{$usuario->foto}}" alt="" /></span>
+                                                                <span>
+                                                                    <span>{{$usuario->apelido}}</span>
+                                                                    <span class="time">{{$chamada->data_inicio == date('Y-m-d') ? "Hoje" . " às ". $chamada->hora_inicio : $chamada->data. " às ". $chamada->hora_inicio}}</span>
+                                                                 </span>
+                                                                <span class="message">{{$chamada->descricao}}</span>
+                                                            </a>
+                                                        </li>
+                                                    @endif
+                                                @endforeach
+                                            @endif
+                                        @endforeach
+                                    @endforeach
+                                @else
+                                    <li>
+                                        <a>
+                                            <span class="message">Não há notificações para hoje.</span>
+                                        </a>
+                                    </li>
+                                @endif
+                            </ul>
+                        </li>

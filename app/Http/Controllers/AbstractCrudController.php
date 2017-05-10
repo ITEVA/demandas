@@ -304,7 +304,23 @@ abstract class AbstractCrudController extends Controller
     protected function mesAtualBr()
     {
         date_default_timezone_set('America/Fortaleza');
-        return date('M');
+        $mes_extenso = array(
+            'Jan' => 'Janeiro',
+            'Feb' => 'Fevereiro',
+            'Mar' => 'Marco',
+            'Apr' => 'Abril',
+            'May' => 'Maio',
+            'Jun' => 'Junho',
+            'Jul' => 'Julho',
+            'Aug' => 'Agosto',
+            'Nov' => 'Novembro',
+            'Sep' => 'Setembro',
+            'Oct' => 'Outubro',
+            'Dec' => 'Dezembro'
+        );
+        $dataEn = date('M');
+
+       return $mes_extenso[$dataEn];
     }
 
     /**

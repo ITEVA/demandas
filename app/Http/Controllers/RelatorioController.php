@@ -124,11 +124,12 @@ class RelatorioController extends AbstractCrudController
 
     protected function listarChamadas()
     {
+        $mesAtual = parent::mesAtualBr();
         if($this->checkPermissao()) return redirect('error404');
         $itensPermitidos = $this->getClassesPermissao(Auth::user()->permissao->id);
 
-        $users = User::where(['id_empregador' => Auth::user()->id_empregador])->get();
-        $chamadas = Chamada::where($this->getFilter())->get();
+        $users = User::where($this->getFilter())->get();
+        $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->get();
         $chamadasAgendadas = ChamadaAgendada::where($this->getFilter())->get();
 
         $usuarioFiltrado = 'geral';
@@ -136,6 +137,7 @@ class RelatorioController extends AbstractCrudController
         return view('adm.relatorios.chamadas')
             ->with('itensPermitidos', $itensPermitidos)
             ->with('users', $users)
+            ->with('mesAtual', $mesAtual)
             ->with('chamadas', $chamadas)
             ->with('chamadasAgendadas', $chamadasAgendadas)
             ->with('usuarioFiltrado', $usuarioFiltrado);
@@ -146,13 +148,24 @@ class RelatorioController extends AbstractCrudController
         if($this->checkPermissao()) return redirect('error404');
         $itensPermitidos = $this->getClassesPermissao(Auth::user()->permissao->id);
 
-        $users = User::where(['id_empregador' => Auth::user()->id_empregador])->get();
-        $chamadas = Chamada::where($this->getFilter())->get();
+        $users = User::where($this->getFilter())->get();
         $chamadasAgendadas = ChamadaAgendada::where($this->getFilter())->get();
+        $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->get();
+        $meses = array();
+        $i = 0;
 
-        if($request->usuarios == 'geral')
-            $chamadas = Chamada::where($this->getFilter())->get();
+        foreach ($chamadas as $chamada){
+            $mes = explode('-', $chamada->data_inicio);
+            $meses[$i++] = $mes[1];
+        }
 
+        $dataInicio = '2017-'. $request->mes . '-01';
+        $dataFim = '2017-'. $request->mes . '-31';
+
+
+        if($request->usuarios == 'geral') {
+            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->whereBetween('data_inicio', [$dataInicio, $dataFim])->get();
+        }
         else {
             $chamadasUsers = ChamadaUser::where(['id_empregador' => Auth::user()->id_empregador, 'id_usuario' => $request->usuarios])->get();
             $idsFiltro = array();
@@ -162,7 +175,7 @@ class RelatorioController extends AbstractCrudController
                 $idsFiltro[$i++] = $chamadaUser->id_chamada;
             }
 
-            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador])->whereIn('id', $idsFiltro)->get();
+            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->whereIn('id', $idsFiltro)->whereBetween('data_inicio', [$dataInicio, $dataFim])->get();
         }
 
         $usuarioFiltrado = $request->usuarios;
@@ -177,12 +190,17 @@ class RelatorioController extends AbstractCrudController
 
     protected function imprimirChamadas(Request $request)
     {
-        $users = User::where(['id_empregador' => Auth::user()->id_empregador])->get();
+        date_default_timezone_set('America/Sao_Paulo');
+        $dataEn = parent::dataAtualEn();
+        $dataBr = parent::dataAtualBr();
+        $diaSemana = parent::diaSemana($dataEn);
+        $mesAtual = parent::mesAtualBr();
+        $users = User::where($this->getFilter())->get();
         $userFilter = User::where(['id_empregador' => Auth::user()->id_empregador, 'id' => $request->usuarios])->get();
         $userName = $request->usuarios === "geral" ? 'Geral' : $userFilter[0]->nome;
 
         if($request->usuarios == 'geral')
-            $chamadas = Chamada::where($this->getFilter())->get();
+            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->get();
 
         else {
             $chamadasUsers = ChamadaUser::where(['id_empregador' => Auth::user()->id_empregador, 'id_usuario' => $request->usuarios])->get();
@@ -193,7 +211,7 @@ class RelatorioController extends AbstractCrudController
                 $idsFiltro[$i++] = $chamadaUser->id_chamada;
             }
 
-            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador])->whereIn('id', $idsFiltro)->get();
+            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->whereIn('id', $idsFiltro)->get();
         }
 
         foreach ($chamadas as $chamada){
@@ -202,13 +220,6 @@ class RelatorioController extends AbstractCrudController
                 $chamada->pessoas = $chamada->pessoas.$a->usuario->apelido."\n";
             }
         }
-
-        
-        date_default_timezone_set('America/Sao_Paulo');
-        $dataEn = parent::dataAtualEn();
-        $dataBr = parent::dataAtualBr();
-        $diaSemana = parent::diaSemana($dataEn);
-        $mesAtual = parent::mesAtualBr();
 
         //Criando o objeto de PDF e inicializando suas configurações
         $pdf = new FPDF("P", "pt", "A4");
@@ -239,6 +250,7 @@ class RelatorioController extends AbstractCrudController
         if(count($chamadas) > 0) {
             $pdf->SetY($pdf->GetY() + 20);
             $totalHoras = 0;
+            $totalHoras2 = 0;
             $totalMin = 0;
             $minFinal = 0;
             foreach ($chamadas as $chamada) {
@@ -264,9 +276,21 @@ class RelatorioController extends AbstractCrudController
                     $minFinal = ((($minF - $minI) < 10) ? '0' : '') . ($minF - $minI);
                 }
 
-                $total = ($horaFinal.':'.$minFinal.':00h');
-
                 $nomesQ = explode("\n", $chamada->pessoas);
+
+                $numPessoas = count($nomesQ);
+
+                $minFinal = ($minFinal*($numPessoas-1));
+
+                while($minFinal > 60){
+                    $minFinal = $minFinal - 60;
+                    $totalHoras2++;
+                }
+
+                $total = ((($totalHoras2+$horaFinal)*($numPessoas-1)).':'.$minFinal.':00h');
+
+                $totalHoras2 = 0;
+
 
                 $pdf->SetX(20);
                 $pdf->Cell(80, 14, $data, 'T, L, R', 0, "C");

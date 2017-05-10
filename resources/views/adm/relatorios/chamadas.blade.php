@@ -21,7 +21,7 @@
                         <form method="POST" action="relatorios/chamadas" enctype="multipart/form-data" id="filtro" data-parsley-validate>
                             <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
 
-                            <div class="form-group col-md-2 col-xs-12">
+                            <div class="form-group col-lg-3 col-md-3 col-xs-12">
                                 <label>Pessoa*</label>
                                 <select name="usuarios" class="select2_single form-control">
                                     <option {{(isset($ids) ? 'selected="selected"' : "")}} value="">Selecione uma pessoa
@@ -36,6 +36,26 @@
                                     @endif
                                 </select>
                             </div>
+
+                            <div class="form-group col-lg-3 col-md-5 col-xs-12">
+                                <label>Mês*</label>
+                                <select name="mes" class="select2_single form-control" required="required">
+                                    <option selected>Selecione um mês</option>
+                                    <option value="01">Janeiro</option>
+                                    <option value="02">Fevereiro</option>
+                                    <option value="03">Março</option>
+                                    <option value="04">Abril</option>
+                                    <option value="05">Maio</option>
+                                    <option value="06">Junho</option>
+                                    <option value="07">Julho</option>
+                                    <option value="08">Agosto</option>
+                                    <option value="09">Setembro</option>
+                                    <option value="10">Outubro</option>
+                                    <option value="11">Novembro</option>
+                                    <option value="12">Dezembro</option>
+                                </select>
+                            </div>
+
 
                             <div class="form-group col-md-3 col-xs-12 quebrarDiv">
                                 <input type="submit" name="filtrar" class="btn btn-success" value="Filtrar"/>
