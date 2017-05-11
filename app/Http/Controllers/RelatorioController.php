@@ -151,13 +151,6 @@ class RelatorioController extends AbstractCrudController
         $users = User::where($this->getFilter())->get();
         $chamadasAgendadas = ChamadaAgendada::where($this->getFilter())->get();
         $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->get();
-        $meses = array();
-        $i = 0;
-
-        foreach ($chamadas as $chamada){
-            $mes = explode('-', $chamada->data_inicio);
-            $meses[$i++] = $mes[1];
-        }
 
         $dataInicio = '2017-'. $request->mes . '-01';
         $dataFim = '2017-'. $request->mes . '-31';
@@ -184,6 +177,7 @@ class RelatorioController extends AbstractCrudController
             ->with('itensPermitidos', $itensPermitidos)
             ->with('users', $users)
             ->with('chamadas', $chamadas)
+            ->with('mesSelecionado', $request->mes)
             ->with('chamadasAgendadas', $chamadasAgendadas)
             ->with('usuarioFiltrado', $usuarioFiltrado);
     }
@@ -199,8 +193,26 @@ class RelatorioController extends AbstractCrudController
         $userFilter = User::where(['id_empregador' => Auth::user()->id_empregador, 'id' => $request->usuarios])->get();
         $userName = $request->usuarios === "geral" ? 'Geral' : $userFilter[0]->nome;
 
+        $mes_extenso = array(
+            1 => 'Janeiro',
+            2 => 'Fevereiro',
+            3 => 'Marco',
+            4 => 'Abril',
+            5 => 'Maio',
+            6 => 'Junho',
+            7 => 'Julho',
+            8 => 'Agosto',
+            9 => 'Novembro',
+            10 => 'Setembro',
+            11 => 'Outubro',
+            12 => 'Dezembro'
+        );
+
+        $dataInicio = '2017-'. $request->mes . '-01';
+        $dataFim = '2017-'. $request->mes . '-31';
+
         if($request->usuarios == 'geral')
-            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->get();
+            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->whereBetween('data_inicio', [$dataInicio, $dataFim])->get();
 
         else {
             $chamadasUsers = ChamadaUser::where(['id_empregador' => Auth::user()->id_empregador, 'id_usuario' => $request->usuarios])->get();
@@ -211,7 +223,8 @@ class RelatorioController extends AbstractCrudController
                 $idsFiltro[$i++] = $chamadaUser->id_chamada;
             }
 
-            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->whereIn('id', $idsFiltro)->get();
+            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->whereIn('id', $idsFiltro)->whereBetween('data_inicio', [$dataInicio, $dataFim])->get();
+
         }
 
         foreach ($chamadas as $chamada){
@@ -233,7 +246,7 @@ class RelatorioController extends AbstractCrudController
         $pdf->Image('adm/images/logo.png');
         $pdf->SetXY(225, 80);
         $pdf->SetFont('arial', '', 10);
-        $pdf->Cell(595, 14, $mesAtual, 0, 0, "C");
+        $pdf->Cell(595, 14, $mes_extenso[$request->mes], 0, 0, "C");
         $pdf->Line(20, 110 , 575, 110);
 
         $pdf->SetXY(0, 115);

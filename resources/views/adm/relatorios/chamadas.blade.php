@@ -39,20 +39,20 @@
 
                             <div class="form-group col-lg-3 col-md-5 col-xs-12">
                                 <label>Mês*</label>
-                                <select name="mes" class="select2_single form-control" required="required">
-                                    <option selected>Selecione um mês</option>
-                                    <option value="01">Janeiro</option>
-                                    <option value="02">Fevereiro</option>
-                                    <option value="03">Março</option>
-                                    <option value="04">Abril</option>
-                                    <option value="05">Maio</option>
-                                    <option value="06">Junho</option>
-                                    <option value="07">Julho</option>
-                                    <option value="08">Agosto</option>
-                                    <option value="09">Setembro</option>
-                                    <option value="10">Outubro</option>
-                                    <option value="11">Novembro</option>
-                                    <option value="12">Dezembro</option>
+                                <select name="mes" class="select2_single form-control" required>
+                                    <option {{!isset($mesSelecionado) ? 'selected = selected' : ''}} value="">Selecione um mês</option>
+                                    <option {{isset($mesSelecionado) ? ($mesSelecionado == 1 ? 'selected = selected' : '') : ''}} value="1">Janeiro</option>
+                                    <option {{isset($mesSelecionado) ? ($mesSelecionado == 2 ? 'selected = selected' : '') : ''}} value="2">Fevereiro</option>
+                                    <option {{isset($mesSelecionado) ? ($mesSelecionado == 3 ? 'selected = selected' : '') : ''}} value="3">Março</option>
+                                    <option {{isset($mesSelecionado) ? ($mesSelecionado == 4 ? 'selected = selected' : '') : ''}} value="4">Abril</option>
+                                    <option {{isset($mesSelecionado) ? ($mesSelecionado == 5 ? 'selected = selected' : '') : ''}} value="5">Maio</option>
+                                    <option {{isset($mesSelecionado) ? ($mesSelecionado == 6 ? 'selected = selected' : '') : ''}} value="6">Junho</option>
+                                    <option {{isset($mesSelecionado) ? ($mesSelecionado == 7 ? 'selected = selected' : '') : ''}} value="7">Julho</option>
+                                    <option {{isset($mesSelecionado) ? ($mesSelecionado == 8 ? 'selected = selected' : '') : ''}} value="8">Agosto</option>
+                                    <option {{isset($mesSelecionado) ? ($mesSelecionado == 9 ? 'selected = selected' : '') : ''}} value="9">Setembro</option>
+                                    <option {{isset($mesSelecionado) ? ($mesSelecionado == 10 ? 'selected = selected' : '') : ''}} value="10">Outubro</option>
+                                    <option {{isset($mesSelecionado) ? ($mesSelecionado == 11 ? 'selected = selected' : '') : ''}} value="11">Novembro</option>
+                                    <option {{isset($mesSelecionado) ? ($mesSelecionado == 12 ? 'selected = selected' : '') : ''}} value="12">Dezembro</option>
                                 </select>
                             </div>
 
