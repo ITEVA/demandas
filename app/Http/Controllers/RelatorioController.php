@@ -157,8 +157,15 @@ class RelatorioController extends AbstractCrudController
 
 
         if($request->usuarios == 'geral') {
-            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->whereBetween('data_inicio', [$dataInicio, $dataFim])->get();
+            if ($request->mes != 0) {
+                $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->whereBetween('data_inicio', [$dataInicio, $dataFim])->get();
+            }
+
+            else {
+                $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->get();
+            }
         }
+
         else {
             $chamadasUsers = ChamadaUser::where(['id_empregador' => Auth::user()->id_empregador, 'id_usuario' => $request->usuarios])->get();
             $idsFiltro = array();
@@ -194,6 +201,7 @@ class RelatorioController extends AbstractCrudController
         $userName = $request->usuarios === "geral" ? 'Geral' : $userFilter[0]->nome;
 
         $mes_extenso = array(
+            0 => 'Geral',
             1 => 'Janeiro',
             2 => 'Fevereiro',
             3 => 'Marco',
@@ -211,8 +219,15 @@ class RelatorioController extends AbstractCrudController
         $dataInicio = '2017-'. $request->mes . '-01';
         $dataFim = '2017-'. $request->mes . '-31';
 
-        if($request->usuarios == 'geral')
-            $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->whereBetween('data_inicio', [$dataInicio, $dataFim])->get();
+        if($request->usuarios == 'geral') {
+            if($request->mes != 0) {
+                $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->whereBetween('data_inicio', [$dataInicio, $dataFim])->get();
+            }
+
+            else {
+                $chamadas = Chamada::where(['id_empregador' => Auth::user()->id_empregador, 'status' => 1])->get();
+            }
+        }
 
         else {
             $chamadasUsers = ChamadaUser::where(['id_empregador' => Auth::user()->id_empregador, 'id_usuario' => $request->usuarios])->get();

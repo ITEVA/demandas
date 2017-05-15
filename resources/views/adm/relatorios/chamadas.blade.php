@@ -41,6 +41,7 @@
                                 <label>Mês*</label>
                                 <select name="mes" class="select2_single form-control" required>
                                     <option {{!isset($mesSelecionado) ? 'selected = selected' : ''}} value="">Selecione um mês</option>
+                                    <option {{isset($mesSelecionado) ? ($mesSelecionado == 0 ? 'selected = selected' : '') : ''}} value="0">Geral</option>
                                     <option {{isset($mesSelecionado) ? ($mesSelecionado == 1 ? 'selected = selected' : '') : ''}} value="1">Janeiro</option>
                                     <option {{isset($mesSelecionado) ? ($mesSelecionado == 2 ? 'selected = selected' : '') : ''}} value="2">Fevereiro</option>
                                     <option {{isset($mesSelecionado) ? ($mesSelecionado == 3 ? 'selected = selected' : '') : ''}} value="3">Março</option>
